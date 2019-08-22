@@ -6,7 +6,7 @@
 
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSSZZZ} | %t | %-5level | %c{1} | %msg%n" />    </Console>
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSSZZZ} | %-5level | %t | %c{1} | %msg%n" />    </Console>
   </Appenders>
   <Loggers>
     <Root level="${sys:root.log.level}">
