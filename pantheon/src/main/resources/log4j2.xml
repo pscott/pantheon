@@ -10,7 +10,7 @@
       %style{|}{dim} %highlight{%-5level}{INFO=cyan, ERROR=bright red, WARN=bright yellow}
       %style{|}{dim} %style{%t}{cyan}
       %style{|}{dim} %style{%c{1}}{cyan}
-      %style{|}{dim} %highlight{%m}{INFO=Normal, ERROR=bright red, WARN=bright yellow}%n" />    </Console>
+      %style{|}{dim} %highlight{%m}{INFO=Normal, ERROR=bright red, WARN=bright yellow, FATAL=bright red}%n" />    </Console>
   </Appenders>
   <Loggers>
     <Root level="${sys:root.log.level}">
