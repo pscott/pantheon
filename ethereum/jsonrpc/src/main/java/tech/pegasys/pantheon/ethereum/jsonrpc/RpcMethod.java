@@ -42,6 +42,7 @@ public enum RpcMethod {
   PRIV_FIND_PRIVACY_GROUP("priv_findPrivacyGroup"),
   PRIV_GET_CODE("priv_getCode"),
   EEA_SEND_RAW_TRANSACTION("eea_sendRawTransaction"),
+  EEA_GET_TRANSACTION_COUNT("eea_getTransactionCount"),
   ETH_ACCOUNTS("eth_accounts"),
   ETH_BLOCK_NUMBER("eth_blockNumber"),
   ETH_CALL("eth_call"),
