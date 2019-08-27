@@ -99,6 +99,7 @@ import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.eea.EeaSe
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivCreatePrivacyGroup;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivDeletePrivacyGroup;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivFindPrivacyGroup;
+import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivGetCode;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivGetPrivacyPrecompileAddress;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivGetPrivateTransaction;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivGetTransactionCount;
@@ -355,6 +356,7 @@ public class JsonRpcMethodsFactory {
             new PrivDeletePrivacyGroup(
                 new Enclave(privacyParameters.getEnclaveUri()), privacyParameters, parameter),
             new PrivFindPrivacyGroup(new Enclave(privacyParameters.getEnclaveUri()), parameter),
+            new PrivGetCode(parameter, privateTransactionHandler),
             new PrivGetPrivacyPrecompileAddress(privacyParameters),
             new PrivGetTransactionCount(parameter, privateTransactionHandler),
             new PrivGetPrivateTransaction(

@@ -28,6 +28,7 @@ import tech.pegasys.pantheon.ethereum.mainnet.ValidationResult;
 import tech.pegasys.pantheon.ethereum.privacy.markertransaction.PrivateMarkerTransactionFactory;
 import tech.pegasys.pantheon.ethereum.rlp.BytesValueRLPOutput;
 import tech.pegasys.pantheon.ethereum.worldstate.WorldStateArchive;
+import tech.pegasys.pantheon.util.bytes.BytesValue;
 import tech.pegasys.pantheon.util.bytes.BytesValues;
 
 import java.math.BigInteger;
@@ -146,6 +147,55 @@ public class PrivateTransactionHandler {
       return new SendRequestLegacy(
           payload, BytesValues.asBase64String(privateTransaction.getPrivateFrom()), privateFor);
     }
+  }
+
+  //  public Optional<BytesValue> getAccountCode(final Address sender, final String privacyGroupId)
+  // {
+  //    return privateStateStorage
+  //        .getPrivateAccountState(BytesValues.fromBase64(privacyGroupId))
+  //        .map(
+  //                    lastRootHash ->
+  //                        privateWorldStateArchive
+  //                            .getMutable(lastRootHash)
+  //                            .map(
+  //                              worldState -> {
+  //                               final Account maybePrivateSender = worldState.get(sender);
+
+  //                                if (maybePrivateSender != null) {
+  //                                  return maybePrivateSender.getCode();
+  //                              }
+  //                              // account has not interacted in this private state
+  //                              return BytesValue.EMPTY;
+  //                            }
+  //                            // private state does not exist
+  //                            .orElse(BytesValue.EMPTY))
+  //                    .orElse(
+  //                            // private state does not exist
+  //                            BytesValue.EMPTY);
+  //  }
+
+  public BytesValue getAccountCode(final Address sender, final String privacyGroupId) {
+    return privateStateStorage
+        .getPrivateAccountState(BytesValues.fromBase64(privacyGroupId))
+        .map(
+            lastRootHash ->
+                privateWorldStateArchive
+                    .getMutable(lastRootHash)
+                    .map(
+                        worldState -> {
+                          final Account maybePrivateSender = worldState.get(sender);
+
+                          if (maybePrivateSender != null) {
+                            return maybePrivateSender.getCode();
+                          }
+                          // account has not interacted in this private state
+                          return BytesValue.EMPTY;
+                        })
+                    // private state does not exist
+                    .orElse(BytesValue.EMPTY))
+        .orElse(
+            // private state does not exist
+            BytesValue.EMPTY);
   }
 
   public long getSenderNonce(final Address sender, final String privacyGroupId) {
