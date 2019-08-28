@@ -127,6 +127,7 @@ import tech.pegasys.pantheon.ethereum.worldstate.WorldStateArchive;
 import tech.pegasys.pantheon.metrics.MetricsSystem;
 import tech.pegasys.pantheon.metrics.prometheus.MetricsConfiguration;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -140,7 +141,7 @@ public class JsonRpcMethodsFactory {
 
   public Map<String, JsonRpcMethod> methods(
       final String clientVersion,
-      final int networkId,
+      final BigInteger networkId,
       final GenesisConfigOptions genesisConfigOptions,
       final P2PNetwork peerNetworkingService,
       final Blockchain blockchain,
@@ -185,7 +186,7 @@ public class JsonRpcMethodsFactory {
 
   public Map<String, JsonRpcMethod> methods(
       final String clientVersion,
-      final int networkId,
+      final BigInteger networkId,
       final GenesisConfigOptions genesisConfigOptions,
       final P2PNetwork p2pNetwork,
       final BlockchainQueries blockchainQueries,
@@ -334,7 +335,8 @@ public class JsonRpcMethodsFactory {
           new AdminChangeLogLevel(parameter));
     }
 
-    boolean eea = rpcApis.contains(RpcApis.EEA), priv = rpcApis.contains(RpcApis.PRIV);
+    final boolean eea = rpcApis.contains(RpcApis.EEA);
+    final boolean priv = rpcApis.contains(RpcApis.PRIV);
     if (eea || priv) {
       final PrivateMarkerTransactionFactory markerTransactionFactory =
           createPrivateMarkerTransactionFactory(
