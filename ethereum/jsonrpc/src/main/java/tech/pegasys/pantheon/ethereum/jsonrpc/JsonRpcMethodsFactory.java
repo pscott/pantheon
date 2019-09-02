@@ -102,6 +102,7 @@ import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.eea.EeaSe
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivCreatePrivacyGroup;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivDeletePrivacyGroup;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivFindPrivacyGroup;
+import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivGetCode;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivGetPrivacyPrecompileAddress;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivGetPrivateTransaction;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivGetTransactionCount;
