@@ -41,9 +41,8 @@ public class PrivGetCode implements JsonRpcMethod {
 
   @Override
   public JsonRpcResponse response(final JsonRpcRequest request) {
-    // PSCOTT: check if ethgetcode with params > 3 works
     final Address address = parameters.required(request.getParams(), 0, Address.class);
-    final String privacyGroupId = parameters.required(request.getParams(), 2, String.class);
+    final String privacyGroupId = parameters.required(request.getParams(), 1, String.class);
 
     final BytesValue byteCode = privateTransactionHandler.getAccountCode(address, privacyGroupId);
 
