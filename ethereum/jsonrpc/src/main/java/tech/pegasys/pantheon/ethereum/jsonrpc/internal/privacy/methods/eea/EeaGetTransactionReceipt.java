@@ -74,6 +74,7 @@ public class EeaGetTransactionReceipt implements JsonRpcMethod {
   @Override
   public JsonRpcResponse response(final JsonRpcRequest request) {
     LOG.trace("Executing {}", RpcMethod.EEA_GET_TRANSACTION_RECEIPT.getMethodName());
+    request.assertLength(1);
     final Hash transactionHash = parameters.required(request.getParams(), 0, Hash.class);
     final Optional<TransactionLocation> maybeLocation =
         blockchain.getBlockchain().getTransactionLocation(transactionHash);
