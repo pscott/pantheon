@@ -33,7 +33,7 @@ public class EthGetUncleCountByBlockNumber extends AbstractBlockParameterMethod 
 
   @Override
   protected BlockParameter blockParameter(final JsonRpcRequest request) {
-    request.assertLength(1);
+    request.assertMaxLength(1);
     return getParameters().required(request.getParams(), 0, BlockParameter.class);
   }
 

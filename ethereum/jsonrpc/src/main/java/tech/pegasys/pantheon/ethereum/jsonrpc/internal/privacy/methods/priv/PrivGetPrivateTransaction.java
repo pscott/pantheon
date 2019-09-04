@@ -64,7 +64,7 @@ public class PrivGetPrivateTransaction implements JsonRpcMethod {
   public JsonRpcResponse response(final JsonRpcRequest request) {
     LOG.trace("Executing {}", RpcMethod.PRIV_GET_PRIVATE_TRANSACTION.getMethodName());
 
-    request.assertLength(1);
+    request.assertMaxLength(1);
     final Hash hash = parameters.required(request.getParams(), 0, Hash.class);
     final TransactionWithMetadata resultTransaction =
         blockchain.transactionByHash(hash).orElse(null);

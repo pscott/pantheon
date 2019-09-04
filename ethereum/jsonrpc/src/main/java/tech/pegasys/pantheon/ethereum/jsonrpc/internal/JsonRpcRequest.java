@@ -71,7 +71,7 @@ public class JsonRpcRequest {
   }
 
   @JsonIgnore
-  public void assertLength(final int expectedLength) {
+  public void assertMaxLength(final int expectedLength) {
     final int length = getParamLength();
     if (length > expectedLength) {
       throw new InvalidJsonRpcParameters(
