@@ -101,8 +101,7 @@ public class EeaGetTransactionCountTest {
 
     when(nonceProvider.determineNonce(privateFrom, privateFor, address)).thenReturn(reportedNonce);
 
-    final Object[] jsonBody =
-        new Object[] {address.toString(), privateFrom, privateFor, privateFor};
+    final Object[] jsonBody = new Object[] {address.toString(), privateFrom, privateFor, "tooMany"};
     final JsonRpcRequest tooManyParamsReq =
         new JsonRpcRequest("2.0", "eea_getTransactionCount", jsonBody);
     assertThatExceptionOfType(RuntimeException.class)
