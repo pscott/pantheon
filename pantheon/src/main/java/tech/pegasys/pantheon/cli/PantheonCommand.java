@@ -82,16 +82,17 @@ import tech.pegasys.pantheon.ethereum.permissioning.PermissioningConfiguration;
 import tech.pegasys.pantheon.ethereum.permissioning.PermissioningConfigurationBuilder;
 import tech.pegasys.pantheon.ethereum.permissioning.SmartContractPermissioningConfiguration;
 import tech.pegasys.pantheon.ethereum.worldstate.PruningConfiguration;
-import tech.pegasys.pantheon.metrics.MetricCategory;
-import tech.pegasys.pantheon.metrics.MetricsSystem;
+import tech.pegasys.pantheon.metrics.ObservableMetricsSystem;
 import tech.pegasys.pantheon.metrics.PantheonMetricCategory;
 import tech.pegasys.pantheon.metrics.StandardMetricCategory;
 import tech.pegasys.pantheon.metrics.prometheus.MetricsConfiguration;
 import tech.pegasys.pantheon.metrics.prometheus.PrometheusMetricsSystem;
 import tech.pegasys.pantheon.metrics.vertx.VertxMetricsAdapterFactory;
 import tech.pegasys.pantheon.nat.NatMethod;
+import tech.pegasys.pantheon.plugin.services.MetricsSystem;
 import tech.pegasys.pantheon.plugin.services.PantheonEvents;
 import tech.pegasys.pantheon.plugin.services.PicoCLIOptions;
+import tech.pegasys.pantheon.plugin.services.metrics.MetricCategory;
 import tech.pegasys.pantheon.services.PantheonEventsImpl;
 import tech.pegasys.pantheon.services.PantheonPluginContextImpl;
 import tech.pegasys.pantheon.services.PicoCLIOptionsImpl;
@@ -329,11 +330,11 @@ public class PantheonCommand implements DefaultCommandValues, Runnable {
 
   @Option(
       names = {"--network-id"},
-      paramLabel = MANDATORY_INTEGER_FORMAT_HELP,
+      paramLabel = "<BIG INTEGER>",
       description =
           "P2P network identifier. (default: the selected network chain ID or custom genesis chain ID)",
       arity = "1")
-  private final Integer networkId = null;
+  private final BigInteger networkId = null;
 
   @Option(
       names = {"--graphql-http-enabled"},
@@ -658,7 +659,7 @@ public class PantheonCommand implements DefaultCommandValues, Runnable {
   private Collection<EnodeURL> staticNodes;
   private PantheonController<?> pantheonController;
 
-  private final Supplier<MetricsSystem> metricsSystem =
+  private final Supplier<ObservableMetricsSystem> metricsSystem =
       Suppliers.memoize(() -> PrometheusMetricsSystem.init(metricsConfiguration()));
 
   public PantheonCommand(
@@ -772,11 +773,12 @@ public class PantheonCommand implements DefaultCommandValues, Runnable {
 
   private PantheonCommand preparePlugins() {
     pantheonPluginContext.addService(PicoCLIOptions.class, new PicoCLIOptionsImpl(commandLine));
+    pantheonPluginContext.addService(MetricsSystem.class, getMetricsSystem());
     pantheonPluginContext.registerPlugins(pluginsDir());
     return this;
   }
 
-  private PantheonCommand parse(
+  private void parse(
       final AbstractParseResultHandler<List<Object>> resultHandler,
       final PantheonExceptionHandler exceptionHandler,
       final String... args) {
@@ -787,10 +789,9 @@ public class PantheonCommand implements DefaultCommandValues, Runnable {
         new ConfigOptionSearchAndRunHandler(
             resultHandler, exceptionHandler, CONFIG_FILE_OPTION_NAME, environment, isDocker);
     commandLine.parseWithHandlers(configParsingHandler, exceptionHandler, args);
-    return this;
   }
 
-  private PantheonCommand startSynchronization() {
+  private void startSynchronization() {
     synchronize(
         pantheonController,
         p2pEnabled,
@@ -805,7 +806,6 @@ public class PantheonCommand implements DefaultCommandValues, Runnable {
         metricsConfiguration,
         permissioningConfiguration,
         staticNodes);
-    return this;
   }
 
   private PantheonCommand startPlugins() {
@@ -947,7 +947,7 @@ public class PantheonCommand implements DefaultCommandValues, Runnable {
           .isRevertReasonEnabled(isRevertReasonEnabled)
           .isPruningEnabled(isPruningEnabled)
           .pruningConfiguration(buildPruningConfiguration());
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new ExecutionException(this.commandLine, "Invalid path", e);
     }
   }
@@ -1240,7 +1240,7 @@ public class PantheonCommand implements DefaultCommandValues, Runnable {
 
     permissioningConfiguration.ifPresent(runnerBuilder::permissioningConfiguration);
 
-    final MetricsSystem metricsSystem = this.metricsSystem.get();
+    final ObservableMetricsSystem metricsSystem = this.metricsSystem.get();
     final Runner runner =
         runnerBuilder
             .vertx(Vertx.vertx(createVertxOptions(metricsSystem)))
@@ -1353,7 +1353,6 @@ public class PantheonCommand implements DefaultCommandValues, Runnable {
               genesisConfigFile
                   .getConfigOptions()
                   .getChainId()
-                  .map(BigInteger::intValueExact)
                   .orElse(EthNetworkConfig.getNetworkConfig(MAINNET).getNetworkId()));
         } catch (final DecodeException e) {
           throw new ParameterException(

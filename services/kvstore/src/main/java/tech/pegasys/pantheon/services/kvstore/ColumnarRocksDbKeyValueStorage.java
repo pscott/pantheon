@@ -14,8 +14,8 @@ package tech.pegasys.pantheon.services.kvstore;
 
 import static java.util.Objects.requireNonNullElse;
 
-import tech.pegasys.pantheon.metrics.MetricsSystem;
-import tech.pegasys.pantheon.metrics.OperationTimer;
+import tech.pegasys.pantheon.plugin.services.MetricsSystem;
+import tech.pegasys.pantheon.plugin.services.metrics.OperationTimer;
 import tech.pegasys.pantheon.services.util.RocksDbUtil;
 import tech.pegasys.pantheon.util.bytes.BytesValue;
 
@@ -184,7 +184,9 @@ public class ColumnarRocksDbKeyValueStorage
         final byte[] firstKey = rocksIterator.key();
         rocksIterator.seekToLast();
         if (rocksIterator.isValid()) {
-          db.deleteRange(segmentHandle, firstKey, rocksIterator.key());
+          final byte[] lastKey = rocksIterator.key();
+          db.deleteRange(segmentHandle, firstKey, lastKey);
+          db.delete(segmentHandle, lastKey);
         }
       }
     } catch (final RocksDBException e) {

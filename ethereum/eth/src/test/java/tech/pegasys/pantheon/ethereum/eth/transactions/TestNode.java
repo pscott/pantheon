@@ -47,13 +47,14 @@ import tech.pegasys.pantheon.ethereum.p2p.peers.Peer;
 import tech.pegasys.pantheon.ethereum.p2p.rlpx.connections.PeerConnection;
 import tech.pegasys.pantheon.ethereum.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import tech.pegasys.pantheon.ethereum.worldstate.WorldStateArchive;
-import tech.pegasys.pantheon.metrics.MetricsSystem;
 import tech.pegasys.pantheon.metrics.noop.NoOpMetricsSystem;
+import tech.pegasys.pantheon.plugin.services.MetricsSystem;
 import tech.pegasys.pantheon.testutil.TestClock;
 import tech.pegasys.pantheon.util.bytes.BytesValue;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -110,7 +111,7 @@ public class TestNode implements Closeable {
         new EthProtocolManager(
             blockchain,
             worldStateArchive,
-            1,
+            BigInteger.ONE,
             false,
             1,
             1,
@@ -140,7 +141,7 @@ public class TestNode implements Closeable {
 
     final EthContext ethContext = ethProtocolManager.ethContext();
 
-    SyncState syncState = mock(SyncState.class);
+    final SyncState syncState = mock(SyncState.class);
     when(syncState.isInSync(anyLong())).thenReturn(true);
 
     transactionPool =

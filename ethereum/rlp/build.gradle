@@ -26,8 +26,8 @@ jar {
 }
 
 dependencies {
+  api project(':plugin-api')
   api project(':util')
-  api 'tech.pegasys.pantheon:plugin-api'
 
   implementation 'com.google.guava:guava'
   implementation 'io.vertx:vertx-core'

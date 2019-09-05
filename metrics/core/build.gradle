@@ -27,14 +27,14 @@ jar {
 
 publishing {
   publications {
-    mavenJava(MavenPublication) {
-      artifactId 'metrics-core'
-    }
+    mavenJava(MavenPublication) { artifactId 'metrics-core' }
   }
 }
 
 
 dependencies {
+  implementation project(':plugin-api')
+
   implementation 'com.google.guava:guava'
   implementation 'io.prometheus:simpleclient'
   implementation 'io.prometheus:simpleclient_common'

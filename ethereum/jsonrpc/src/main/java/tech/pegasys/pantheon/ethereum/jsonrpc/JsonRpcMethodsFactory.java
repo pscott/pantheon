@@ -94,15 +94,17 @@ import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.permissioning.Per
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.permissioning.PermReloadPermissionsFromFile;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.permissioning.PermRemoveAccountsFromWhitelist;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.permissioning.PermRemoveNodesFromWhitelist;
-import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.eea.EeaGetTransactionReceipt;
-import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.eea.EeaSendRawTransaction;
-import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivCreatePrivacyGroup;
-import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivDeletePrivacyGroup;
-import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivFindPrivacyGroup;
-import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivGetPrivacyPrecompileAddress;
-import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivGetPrivateTransaction;
-import tech.pegasys.pantheon.ethereum.jsonrpc.internal.methods.privacy.priv.PrivGetTransactionCount;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.parameters.JsonRpcParameter;
+import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.eea.EeaGetTransactionCount;
+import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.eea.EeaGetTransactionReceipt;
+import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.eea.EeaPrivateNonceProvider;
+import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.eea.EeaSendRawTransaction;
+import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivCreatePrivacyGroup;
+import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivDeletePrivacyGroup;
+import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivFindPrivacyGroup;
+import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivGetPrivacyPrecompileAddress;
+import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivGetPrivateTransaction;
+import tech.pegasys.pantheon.ethereum.jsonrpc.internal.privacy.methods.priv.PrivGetTransactionCount;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.processor.BlockReplay;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.processor.BlockTracer;
 import tech.pegasys.pantheon.ethereum.jsonrpc.internal.processor.TransactionTracer;
@@ -121,9 +123,10 @@ import tech.pegasys.pantheon.ethereum.privacy.markertransaction.PrivateMarkerTra
 import tech.pegasys.pantheon.ethereum.privacy.markertransaction.RandomSigningPrivateMarkerTransactionFactory;
 import tech.pegasys.pantheon.ethereum.transaction.TransactionSimulator;
 import tech.pegasys.pantheon.ethereum.worldstate.WorldStateArchive;
-import tech.pegasys.pantheon.metrics.MetricsSystem;
+import tech.pegasys.pantheon.metrics.ObservableMetricsSystem;
 import tech.pegasys.pantheon.metrics.prometheus.MetricsConfiguration;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -137,7 +140,7 @@ public class JsonRpcMethodsFactory {
 
   public Map<String, JsonRpcMethod> methods(
       final String clientVersion,
-      final int networkId,
+      final BigInteger networkId,
       final GenesisConfigOptions genesisConfigOptions,
       final P2PNetwork peerNetworkingService,
       final Blockchain blockchain,
@@ -146,7 +149,7 @@ public class JsonRpcMethodsFactory {
       final TransactionPool transactionPool,
       final ProtocolSchedule<?> protocolSchedule,
       final MiningCoordinator miningCoordinator,
-      final MetricsSystem metricsSystem,
+      final ObservableMetricsSystem metricsSystem,
       final Set<Capability> supportedCapabilities,
       final Collection<RpcApi> rpcApis,
       final FilterManager filterManager,
@@ -182,7 +185,7 @@ public class JsonRpcMethodsFactory {
 
   public Map<String, JsonRpcMethod> methods(
       final String clientVersion,
-      final int networkId,
+      final BigInteger networkId,
       final GenesisConfigOptions genesisConfigOptions,
       final P2PNetwork p2pNetwork,
       final BlockchainQueries blockchainQueries,
@@ -191,7 +194,7 @@ public class JsonRpcMethodsFactory {
       final FilterManager filterManager,
       final TransactionPool transactionPool,
       final MiningCoordinator miningCoordinator,
-      final MetricsSystem metricsSystem,
+      final ObservableMetricsSystem metricsSystem,
       final Set<Capability> supportedCapabilities,
       final Optional<AccountLocalConfigPermissioningController> accountsWhitelistController,
       final Optional<NodeLocalConfigPermissioningController> nodeWhitelistController,
@@ -331,7 +334,8 @@ public class JsonRpcMethodsFactory {
           new AdminChangeLogLevel(parameter));
     }
 
-    boolean eea = rpcApis.contains(RpcApis.EEA), priv = rpcApis.contains(RpcApis.PRIV);
+    final boolean eea = rpcApis.contains(RpcApis.EEA);
+    final boolean priv = rpcApis.contains(RpcApis.PRIV);
     if (eea || priv) {
       final PrivateMarkerTransactionFactory markerTransactionFactory =
           createPrivateMarkerTransactionFactory(
@@ -345,7 +349,9 @@ public class JsonRpcMethodsFactory {
         addMethods(
             enabledMethods,
             new EeaGetTransactionReceipt(blockchainQueries, enclave, parameter, privacyParameters),
-            new EeaSendRawTransaction(privateTransactionHandler, transactionPool, parameter));
+            new EeaSendRawTransaction(privateTransactionHandler, transactionPool, parameter),
+            new EeaGetTransactionCount(
+                parameter, new EeaPrivateNonceProvider(enclave, privateTransactionHandler)));
       }
       if (priv) {
         addMethods(

@@ -139,7 +139,6 @@ allprojects {
         exclude '**/generalstate/GeneralStateReferenceTest*.java'
         exclude '**/generalstate/GeneralStateRegressionReferenceTest*.java'
         exclude '**/blockchain/BlockchainReferenceTest*.java'
-        exclude '**/pantheon/PantheonInfo.java'
         exclude '**/.gradle/**'
       }
       removeUnusedImports()
@@ -273,6 +272,9 @@ allprojects {
 
 task deploy() {}
 
+tasks.register('checkPluginAPIChanges', DefaultTask) { }
+checkPluginAPIChanges.dependsOn(':plugin-api:checkAPIChanges')
+check.dependsOn('checkPluginAPIChanges')
 
 subprojects {
 
