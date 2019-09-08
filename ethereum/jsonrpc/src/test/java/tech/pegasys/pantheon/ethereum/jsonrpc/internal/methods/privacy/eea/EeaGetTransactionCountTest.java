@@ -94,7 +94,7 @@ public class EeaGetTransactionCountTest {
   }
 
   @Test
-  public void TooManyParamsThrowsAnException() {
+  public void tooManyParamsThrowsAnException() {
     final long reportedNonce = 8L;
     final EeaGetTransactionCount method =
         new EeaGetTransactionCount(new JsonRpcParameter(), nonceProvider);

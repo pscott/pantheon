@@ -53,9 +53,9 @@ public class PrivCreatePrivacyGroup implements JsonRpcMethod {
 
   @Override
   public JsonRpcResponse response(final JsonRpcRequest request) {
+    request.assertMaxLength(3);
     LOG.trace("Executing {}", RpcMethod.PRIV_CREATE_PRIVACY_GROUP.getMethodName());
 
-    request.assertMaxLength(3);
     final CreatePrivacyGroupParameter parameter =
         parameters.required(request.getParams(), 0, CreatePrivacyGroupParameter.class);
 
