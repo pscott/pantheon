@@ -69,7 +69,7 @@ public class PrivGetPrivacyPrecompileAddressTest {
   }
 
   @Test
-  public void tooManyParams() {
+  public void tooManyParamsThrowsException() {
     when(privacyParameters.getPrivacyAddress()).thenReturn(rawPrivacyAddress);
     when(privacyParameters.isEnabled()).thenReturn(true);
 

@@ -249,7 +249,7 @@ public class PrivCreatePrivacyGroupTest {
   }
 
   @Test
-  public void TooManyParams() {
+  public void tooManyParamsThrowsException() {
 
     final PrivCreatePrivacyGroup privCreatePrivacyGroup =
         new PrivCreatePrivacyGroup(enclave, privacyParameters, parameters);

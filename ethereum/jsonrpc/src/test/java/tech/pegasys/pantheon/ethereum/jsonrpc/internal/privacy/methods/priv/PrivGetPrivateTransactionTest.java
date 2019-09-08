@@ -171,7 +171,7 @@ public class PrivGetPrivateTransactionTest {
   }
 
   @Test
-  public void tooManyParamsThrowsAnException() {
+  public void tooManyParamsThrowsException() {
     when(blockchain.transactionByHash(any(Hash.class)))
         .thenReturn(Optional.of(returnedTransaction));
     when(returnedTransaction.getTransaction()).thenReturn(justTransaction);

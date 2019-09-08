@@ -374,7 +374,7 @@ public class EeaSendRawTransactionTest {
   }
 
   @Test
-  public void tooManyParams() {
+  public void tooManyParamsThrowsException() {
 
     final Object[] params = new Object[] {VALID_PRIVATE_TRANSACTION_RLP, "tooManyParams"};
 

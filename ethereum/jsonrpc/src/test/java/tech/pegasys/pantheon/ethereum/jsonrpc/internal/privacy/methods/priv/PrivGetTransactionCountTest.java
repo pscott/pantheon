@@ -57,7 +57,7 @@ public class PrivGetTransactionCountTest {
   }
 
   @Test
-  public void tooManyParams() {
+  public void tooManyParamsThrowsException() {
     final PrivateTransactionHandler privateTransactionHandler =
         mock(PrivateTransactionHandler.class);
     when(privateTransactionHandler.getSenderNonce(senderAddress, privacyGroupId)).thenReturn(NONCE);
